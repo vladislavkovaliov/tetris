@@ -8,6 +8,28 @@ import { PLAYFIELD_COLUMNS, PLAYFIELD_ROWS, ASS } from "./constants";
 
 import "./style.css";
 
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics, logEvent } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBfOPXt5do_F2jDFzokwSQD14kUan1KVAg",
+  authDomain: "tetris-4f4f6.firebaseapp.com",
+  projectId: "tetris-4f4f6",
+  storageBucket: "tetris-4f4f6.appspot.com",
+  messagingSenderId: "302050048482",
+  appId: "1:302050048482:web:57ef88c3a307fda32f21bb",
+  measurementId: "G-5L9ZCKQELD",
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
 let timeoutId: NodeJS.Timeout | null = null;
 let requestId: number | null = null;
 let hammer: HammerManager | null = null;
@@ -279,6 +301,7 @@ function stopLoop() {
 }
 
 function gameOver() {
+  logEvent(analytics, "game_over", {});
   stopLoop();
   document.removeEventListener("keydown", onKeyDown);
 
