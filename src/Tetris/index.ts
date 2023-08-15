@@ -11,11 +11,14 @@ export type TTetramino = {
   matrix: number[][];
   column: number;
   row: number;
+  ghostColumn: number;
+  ghostRow: number;
 };
 
 export class Tertis {
   public playfield: string[][];
   public tetramino: TTetramino;
+  public isGameOver: boolean;
 
   public constructor() {
     this.playfield = [[]];
@@ -24,9 +27,13 @@ export class Tertis {
       matrix: [[]],
       column: 0,
       row: 0,
+      ghostRow: 0,
+      ghostColumn: 0,
     };
+    this.isGameOver = false;
 
     this.init();
+    this.calculateGhostPosition();
   }
 
   init = (): void => {
@@ -52,7 +59,10 @@ export class Tertis {
       matrix: matrix,
       row: row,
       column: column,
+      ghostColumn: 0,
+      ghostRow: 0,
     };
+    this.calculateGhostPosition();
   };
 
   moveTetraminoDown = (): void => {
@@ -70,6 +80,8 @@ export class Tertis {
 
     if (!this.isValid()) {
       this.tetramino.column++;
+    } else {
+      this.calculateGhostPosition();
     }
   };
 
@@ -78,6 +90,8 @@ export class Tertis {
 
     if (!this.isValid()) {
       this.tetramino.column--;
+    } else {
+      this.calculateGhostPosition();
     }
   };
 
@@ -89,6 +103,8 @@ export class Tertis {
 
     if (!this.isValid()) {
       this.tetramino.matrix = originMatrix;
+    } else {
+      this.calculateGhostPosition();
     }
   };
 
@@ -122,6 +138,10 @@ export class Tertis {
     );
   };
 
+  isOutsideOfTopBoard = (i: number): boolean => {
+    return this.tetramino.row + i < 0;
+  };
+
   isCollides = (row: number, col: number) => {
     return this.playfield[this.tetramino.row + row]?.[
       this.tetramino.column + col
@@ -135,6 +155,11 @@ export class Tertis {
       for (let j = 0; j < size; j++) {
         if (!this.tetramino.matrix[i][j]) {
           continue;
+        }
+
+        if (this.isOutsideOfTopBoard(i)) {
+          this.isGameOver = true;
+          return;
         }
 
         this.playfield[this.tetramino.row + i][this.tetramino.column + j] =
@@ -175,5 +200,19 @@ export class Tertis {
     }
 
     this.playfield[0] = new Array(PLAYFIELD_COLUMNS).fill(0);
+  };
+
+  calculateGhostPosition = (): void => {
+    const tetraminoRow = this.tetramino.row;
+
+    this.tetramino.row++;
+
+    while (this.isValid()) {
+      this.tetramino.row++;
+    }
+
+    this.tetramino.ghostRow = this.tetramino.row - 1;
+    this.tetramino.ghostColumn = this.tetramino.column;
+    this.tetramino.row = tetraminoRow;
   };
 }

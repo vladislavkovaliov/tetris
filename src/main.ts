@@ -5,6 +5,11 @@ import { convertPositionIndex } from "./utils";
 import "./style.css";
 import { PLAYFIELD_COLUMNS, PLAYFIELD_ROWS } from "./constants";
 
+let timeoutId: NodeJS.Timeout | null = null;
+let requestId: number | null = null;
+
+const tetris = new Tertis();
+
 export const getCells = () => document.querySelectorAll(".grid > div");
 
 export const createDiv = () => {
@@ -24,12 +29,9 @@ function main() {
 
   if (gridElement) createGrid(gridElement, 200);
 
-  const tetris = new Tertis();
-  const cells = getCells();
-
-  initKeyDown(tetris);
+  initKeyDown();
   //
-  draw(tetris, cells);
+  moveDown(tetris);
 }
 
 function draw(tetris: Tertis, cells: NodeListOf<Element>) {
@@ -39,6 +41,7 @@ function draw(tetris: Tertis, cells: NodeListOf<Element>) {
   //
   drawPlayfield(tetris, cells);
   drawTetrmino(tetris, cells);
+  drawGhostTetrmino(tetris, cells);
 }
 
 function drawTetrmino(tetris: Tertis, cells: NodeListOf<Element>) {
@@ -83,13 +86,34 @@ function drawPlayfield(tetris: Tertis, cells: NodeListOf<Element>) {
   }
 }
 
-function initKeyDown(tetris: Tertis) {
-  document.addEventListener("keydown", (event: KeyboardEvent) =>
-    onKeyDown(tetris, event)
-  );
+function drawGhostTetrmino(tetris: Tertis, cells: NodeListOf<Element>) {
+  const size = tetris.tetramino.matrix.length;
+
+  for (let i = 0; i < size; i++) {
+    for (let j = 0; j < size; j++) {
+      if (!tetris.tetramino.matrix[i][j]) {
+        continue;
+      }
+
+      if (tetris.tetramino.ghostRow + i < 0) {
+        continue;
+      }
+
+      const cellIndex = convertPositionIndex(
+        tetris.tetramino.ghostRow + i,
+        tetris.tetramino.ghostColumn + j
+      );
+
+      cells[cellIndex].classList.add("ghost");
+    }
+  }
 }
 
-function onKeyDown(tetris: Tertis, event: KeyboardEvent) {
+function initKeyDown() {
+  document.addEventListener("keydown", onKeyDown);
+}
+
+function onKeyDown(event: KeyboardEvent) {
   const { key } = event;
 
   switch (key) {
@@ -117,19 +141,46 @@ function onKeyDown(tetris: Tertis, event: KeyboardEvent) {
 
 function moveDown(tetris: Tertis): void {
   tetris.moveTetraminoDown();
+
   draw(tetris, getCells());
+
+  stopLoop();
+  startLoop(tetris);
+
+  if (tetris.isGameOver) {
+    gameOver();
+  }
 }
+
 function moveLeft(tetris: Tertis): void {
   tetris.moveTetraminoLeft();
   draw(tetris, getCells());
 }
+
 function moveRight(tetris: Tertis): void {
   tetris.moveTetraminoRight();
   draw(tetris, getCells());
 }
+
 function rotate(tetris: Tertis) {
   tetris.rotateTetromino();
   draw(tetris, getCells());
+}
+
+function startLoop(tetris: Tertis) {
+  timeoutId = setTimeout(() => {
+    requestId = requestAnimationFrame(() => moveDown(tetris));
+  }, 700);
+}
+
+function stopLoop() {
+  if (requestId) cancelAnimationFrame(requestId);
+  if (timeoutId) clearTimeout(timeoutId);
+}
+
+function gameOver() {
+  stopLoop();
+  document.removeEventListener("keydown", onKeyDown);
 }
 
 //

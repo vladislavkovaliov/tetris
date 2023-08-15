@@ -27,6 +27,10 @@ body {
   background-color: rgba(1, 8, 89, 0.5);
 }
 
+.grid > div.ghost {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
 .grid > div {
   --call-size: min(4.5vh, 7.5vw);
   height: var(--call-size);
@@ -69,7 +73,8 @@ body {
 .grid > div.O,
 .grid > div.S,
 .grid > div.Z,
-.grid > div.T {
+.grid > div.T,
+.grid > div.ghost {
   box-shadow: inset 2px 2px 2px rgba(255, 255, 255, 0.2) inset -2px -2px 2px
     rgba(1, 8, 89, 0.2);
 }
