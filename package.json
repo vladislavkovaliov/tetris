@@ -29,7 +29,9 @@
     }
   },
   "dependencies": {
-    "@babel/eslint-parser": "^7.21.3"
+    "@babel/eslint-parser": "^7.21.3",
+    "@types/hammerjs": "^2.0.41",
+    "hammerjs": "^2.0.8"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.21.3",

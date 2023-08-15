@@ -1,12 +1,16 @@
+import Hammer from "hammerjs";
+
 import { Tertis } from "./Tetris";
 
 import { convertPositionIndex } from "./utils";
 
-import "./style.css";
 import { PLAYFIELD_COLUMNS, PLAYFIELD_ROWS } from "./constants";
+
+import "./style.css";
 
 let timeoutId: NodeJS.Timeout | null = null;
 let requestId: number | null = null;
+let hammer: HammerManager | null = null;
 
 const tetris = new Tertis();
 
@@ -30,6 +34,7 @@ function main() {
   if (gridElement) createGrid(gridElement, 200);
 
   initKeyDown();
+  initTouch();
   //
   moveDown(tetris);
 }
@@ -111,6 +116,68 @@ function drawGhostTetrmino(tetris: Tertis, cells: NodeListOf<Element>) {
 
 function initKeyDown() {
   document.addEventListener("keydown", onKeyDown);
+}
+
+function initTouch() {
+  document.addEventListener("dblclick", (event) => {
+    event.preventDefault();
+  });
+
+  const body = document.querySelector("body");
+
+  if (body) {
+    hammer = new Hammer(body);
+  }
+
+  if (hammer) {
+    hammer.get("pan").set({ direction: Hammer.DIRECTION_ALL });
+    hammer.get("swipe").set({ direction: Hammer.DIRECTION_ALL });
+
+    const threshold = 30;
+
+    let deltaY = 0;
+    let deltaX = 0;
+
+    hammer.on("panstart", () => {
+      deltaY = 0;
+      deltaX = 0;
+    });
+
+    hammer.on("panleft", (event: HammerInput) => {
+      if (Math.abs(event.deltaX - deltaX) > threshold) {
+        moveLeft(tetris);
+
+        deltaX = event.deltaX;
+        deltaY = event.deltaY;
+      }
+    });
+
+    hammer.on("panright", (event: HammerInput) => {
+      if (Math.abs(event.deltaX - deltaX) > threshold) {
+        moveRight(tetris);
+
+        deltaX = event.deltaX;
+        deltaY = event.deltaY;
+      }
+    });
+
+    hammer.on("pandown", (event: HammerInput) => {
+      if (Math.abs(event.deltaY - deltaY) > threshold) {
+        moveDown(tetris);
+
+        deltaX = event.deltaX;
+        deltaY = event.deltaY;
+      }
+    });
+
+    hammer.on("swipedown", () => {
+      dropDown(tetris);
+    });
+
+    hammer.on("tap", () => {
+      rotate(tetris);
+    });
+  }
 }
 
 function onKeyDown(event: KeyboardEvent) {
@@ -198,6 +265,10 @@ function stopLoop() {
 function gameOver() {
   stopLoop();
   document.removeEventListener("keydown", onKeyDown);
+
+  if (hammer) {
+    hammer.off("panleft panright pandown panstart swipedown");
+  }
 }
 
 //
