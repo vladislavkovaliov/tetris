@@ -4,7 +4,7 @@ import { Tertis } from "./Tetris";
 
 import { convertPositionIndex } from "./utils";
 
-import { PLAYFIELD_COLUMNS, PLAYFIELD_ROWS } from "./constants";
+import { PLAYFIELD_COLUMNS, PLAYFIELD_ROWS, ASS } from "./constants";
 
 import "./style.css";
 
@@ -110,6 +110,22 @@ function drawGhostTetrmino(tetris: Tertis, cells: NodeListOf<Element>) {
       );
 
       cells[cellIndex].classList.add("ghost");
+    }
+  }
+}
+
+function drawBad(cells: NodeListOf<Element>) {
+  const TOP_OFFSET = 5;
+
+  for (let i = 0; i < ASS.length; i++) {
+    for (let j = 0; j < ASS[0].length; j++) {
+      if (!ASS[i][j]) {
+        continue;
+      }
+
+      const cellIndex = convertPositionIndex(TOP_OFFSET + i, j);
+
+      cells[cellIndex].classList.add("ass");
     }
   }
 }
@@ -269,6 +285,26 @@ function gameOver() {
   if (hammer) {
     hammer.off("panleft panright pandown panstart swipedown");
   }
+
+  gameOverAnimation(getCells());
+}
+
+function gameOverAnimation(cells: NodeListOf<Element>) {
+  const filledCells = [...cells].filter((x) => x.classList.length > 0);
+
+  filledCells.forEach((x, i) => {
+    setTimeout(() => {
+      x.classList.add("hide");
+    }, i * 10);
+
+    setTimeout(() => {
+      x.removeAttribute("class");
+    }, i * 10 + 500);
+  });
+
+  setTimeout(() => {
+    drawBad(getCells());
+  }, filledCells.length * 10 + 1000);
 }
 
 //
