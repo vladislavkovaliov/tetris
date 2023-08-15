@@ -34,6 +34,8 @@ let timeoutId: NodeJS.Timeout | null = null;
 let requestId: number | null = null;
 let hammer: HammerManager | null = null;
 
+const scoreElement = document.querySelector("#score-value");
+
 const tetris = new Tertis();
 
 export const getCells = () => document.querySelectorAll(".grid > div");
@@ -64,6 +66,10 @@ function main() {
 function draw(tetris: Tertis, cells: NodeListOf<Element>) {
   if (cells) {
     cells.forEach((cell) => cell.removeAttribute("class"));
+  }
+  //
+  if (scoreElement) {
+    scoreElement.textContent = tetris.scoreValue.toString();
   }
   //
   drawPlayfield(tetris, cells);
@@ -301,7 +307,7 @@ function stopLoop() {
 }
 
 function gameOver() {
-  logEvent(analytics, "game_over", {});
+  logEvent(analytics, "game_over", { score: tetris.scoreValue });
   stopLoop();
   document.removeEventListener("keydown", onKeyDown);
 

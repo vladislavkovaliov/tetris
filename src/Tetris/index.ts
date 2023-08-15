@@ -19,6 +19,7 @@ export class Tertis {
   public playfield: string[][];
   public tetramino: TTetramino;
   public isGameOver: boolean;
+  public scoreValue: number;
 
   public constructor() {
     this.playfield = [[]];
@@ -31,6 +32,7 @@ export class Tertis {
       ghostColumn: 0,
     };
     this.isGameOver = false;
+    this.scoreValue = 0;
 
     this.init();
     this.calculateGhostPosition();
@@ -185,6 +187,10 @@ export class Tertis {
       }
     }
 
+    if (filledRows.length) {
+      this.updateScore(filledRows.length);
+    }
+
     return filledRows;
   };
 
@@ -192,6 +198,10 @@ export class Tertis {
     for (let i = 0; i < rows.length; i++) {
       this.dropRowsAbove(rows[i]);
     }
+  };
+
+  updateScore = (rowCount: number): void => {
+    this.scoreValue = this.scoreValue + PLAYFIELD_COLUMNS * rowCount;
   };
 
   dropRowsAbove = (row: number): void => {

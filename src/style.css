@@ -16,6 +16,14 @@ body {
   user-select: none;
 }
 
+.score {
+  position: absolute;
+  top: 0;
+  right: 0.5vw;
+  height: 2.25vh;
+  color: white;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(10, auto);
