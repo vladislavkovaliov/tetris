@@ -24,3 +24,5 @@ export const rotateMatrix = (matrix: number[][]): number[][] => {
 
   return rotatedMatrix;
 };
+
+export const getCells = () => document.querySelectorAll(".grid > div");

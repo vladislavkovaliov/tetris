@@ -92,18 +92,22 @@ body {
   transition: background-color 0.5s, box-shadow 0.5s;
 }
 
+.grid > div.drop {
+  animation: hide 0.3s;
+}
+
 .grid > div.hide {
   animation: hide 0.5s;
 }
 
 @keyframes hide {
   0% {
-    transform: scale(0.8) rotate(30deg);
+    transform: scale(1);
   }
   45% {
-    transform: scale(0.8) rotate(-30deg);
+    transform: scale(0.8);
   }
   90% {
-    transform: scale(1) rotate(0);
+    transform: scale(0);
   }
 }

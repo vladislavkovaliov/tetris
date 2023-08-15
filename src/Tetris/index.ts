@@ -4,7 +4,12 @@ import {
   TETRAMINOS,
   TETRAMINOS_NAMES,
 } from "../constants";
-import { getRandomElement, rotateMatrix } from "../utils";
+import {
+  convertPositionIndex,
+  getCells,
+  getRandomElement,
+  rotateMatrix,
+} from "../utils";
 
 export type TTetramino = {
   name: string;
@@ -175,6 +180,7 @@ export class Tertis {
 
   proccessFilledRows = (): void => {
     const filledRows = this.getFilledRows();
+
     this.removeFilledRows(filledRows);
   };
 
@@ -205,11 +211,25 @@ export class Tertis {
   };
 
   dropRowsAbove = (row: number): void => {
-    for (let i = row; i > 0; i--) {
-      this.playfield[i] = this.playfield[i - 1];
+    const cells = getCells();
+
+    for (let i = 0; i < PLAYFIELD_COLUMNS; i++) {
+      const cellIndex = convertPositionIndex(row, i);
+
+      setTimeout(() => {
+        cells[cellIndex].classList.add("drop");
+      }, i * 10);
     }
 
-    this.playfield[0] = new Array(PLAYFIELD_COLUMNS).fill(0);
+    setTimeout(() => {
+      for (let i = row; i > 0; i--) {
+        this.playfield[i] = this.playfield[i - 1];
+      }
+
+      this.playfield[0] = new Array(PLAYFIELD_COLUMNS).fill(0);
+
+      this.calculateGhostPosition();
+    }, 150);
   };
 
   dropTetrminoDown = (): void => {

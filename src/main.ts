@@ -2,7 +2,7 @@ import Hammer from "hammerjs";
 
 import { Tertis } from "./Tetris";
 
-import { convertPositionIndex } from "./utils";
+import { convertPositionIndex, getCells } from "./utils";
 
 import { PLAYFIELD_COLUMNS, PLAYFIELD_ROWS, ASS } from "./constants";
 
@@ -37,8 +37,6 @@ let hammer: HammerManager | null = null;
 const scoreElement = document.querySelector("#score-value");
 
 const tetris = new Tertis();
-
-export const getCells = () => document.querySelectorAll(".grid > div");
 
 export const createDiv = () => {
   const divElement = document.createElement("div");
