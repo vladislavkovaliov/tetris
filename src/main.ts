@@ -3,6 +3,7 @@ import { Tertis } from "./Tetris";
 import { convertPositionIndex } from "./utils";
 
 import "./style.css";
+import { PLAYFIELD_COLUMNS, PLAYFIELD_ROWS } from "./constants";
 
 export const getCells = () => document.querySelectorAll(".grid > div");
 
@@ -27,14 +28,16 @@ function main() {
   const cells = getCells();
 
   initKeyDown(tetris);
+  //
   draw(tetris, cells);
-  drawTetrmino(tetris, cells);
 }
 
 function draw(tetris: Tertis, cells: NodeListOf<Element>) {
   if (cells) {
     cells.forEach((cell) => cell.removeAttribute("class"));
   }
+  //
+  drawPlayfield(tetris, cells);
   drawTetrmino(tetris, cells);
 }
 
@@ -61,6 +64,21 @@ function drawTetrmino(tetris: Tertis, cells: NodeListOf<Element>) {
       if (name) {
         cells[cellIndex].classList.add(name);
       }
+    }
+  }
+}
+
+function drawPlayfield(tetris: Tertis, cells: NodeListOf<Element>) {
+  for (let i = 0; i < PLAYFIELD_ROWS; i++) {
+    for (let j = 0; j < PLAYFIELD_COLUMNS; j++) {
+      if (!tetris.playfield[i][j]) {
+        continue;
+      }
+
+      const name = tetris.playfield[i][j];
+      const cellIndex = convertPositionIndex(i, j);
+
+      cells[cellIndex].classList.add(name);
     }
   }
 }

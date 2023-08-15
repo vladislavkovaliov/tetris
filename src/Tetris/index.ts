@@ -14,7 +14,7 @@ export type TTetramino = {
 };
 
 export class Tertis {
-  public playfield: number[][];
+  public playfield: string[][];
   public tetramino: TTetramino;
 
   public constructor() {
@@ -45,8 +45,8 @@ export class Tertis {
     const name = getRandomElement(TETRAMINOS_NAMES);
     const matrix = TETRAMINOS[name];
     const column = PLAYFIELD_COLUMNS / 2 - Math.floor(matrix.length / 2);
-    // const row = -2;
-    const row = 3;
+    const row = -2;
+
     this.tetramino = {
       name: name,
       matrix: matrix,
@@ -104,6 +104,10 @@ export class Tertis {
         if (this.isOutsideOfBoard(i, j)) {
           return false;
         }
+
+        if (this.isCollides(i, j)) {
+          return false;
+        }
       }
     }
 
@@ -118,5 +122,26 @@ export class Tertis {
     );
   };
 
-  placeTetramino = (): void => {};
+  isCollides = (row: number, col: number) => {
+    return this.playfield[this.tetramino.row + row]?.[
+      this.tetramino.column + col
+    ];
+  };
+
+  placeTetramino = (): void => {
+    const size = this.tetramino.matrix.length;
+
+    for (let i = 0; i < size; i++) {
+      for (let j = 0; j < size; j++) {
+        if (!this.tetramino.matrix[i][j]) {
+          continue;
+        }
+
+        this.playfield[this.tetramino.row + i][this.tetramino.column + j] =
+          this.tetramino.name;
+      }
+    }
+
+    this.generateTetramino();
+  };
 }
