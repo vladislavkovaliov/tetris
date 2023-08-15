@@ -202,6 +202,12 @@ export class Tertis {
     this.playfield[0] = new Array(PLAYFIELD_COLUMNS).fill(0);
   };
 
+  dropTetrminoDown = (): void => {
+    this.tetramino.row = this.tetramino.ghostRow;
+
+    this.placeTetramino();
+  };
+
   calculateGhostPosition = (): void => {
     const tetraminoRow = this.tetramino.row;
 

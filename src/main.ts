@@ -133,6 +133,10 @@ function onKeyDown(event: KeyboardEvent) {
       moveRight(tetris);
       break;
     }
+    case " ": {
+      dropDown(tetris);
+      break;
+    }
     default: {
       break;
     }
@@ -165,6 +169,19 @@ function moveRight(tetris: Tertis): void {
 function rotate(tetris: Tertis) {
   tetris.rotateTetromino();
   draw(tetris, getCells());
+}
+
+function dropDown(tetris: Tertis) {
+  tetris.dropTetrminoDown();
+
+  draw(tetris, getCells());
+
+  stopLoop();
+  startLoop(tetris);
+
+  if (tetris.isGameOver) {
+    gameOver();
+  }
 }
 
 function startLoop(tetris: Tertis) {
