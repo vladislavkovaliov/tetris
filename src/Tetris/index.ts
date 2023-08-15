@@ -142,6 +142,38 @@ export class Tertis {
       }
     }
 
+    this.proccessFilledRows();
     this.generateTetramino();
+  };
+
+  proccessFilledRows = (): void => {
+    const filledRows = this.getFilledRows();
+    this.removeFilledRows(filledRows);
+  };
+
+  getFilledRows = (): number[] => {
+    const filledRows = [];
+
+    for (let i = 0; i < PLAYFIELD_ROWS; i++) {
+      if (this.playfield[i].every((x) => Boolean(x))) {
+        filledRows.push(i);
+      }
+    }
+
+    return filledRows;
+  };
+
+  removeFilledRows = (rows: number[]): void => {
+    for (let i = 0; i < rows.length; i++) {
+      this.dropRowsAbove(rows[i]);
+    }
+  };
+
+  dropRowsAbove = (row: number): void => {
+    for (let i = row; i > 0; i--) {
+      this.playfield[i] = this.playfield[i - 1];
+    }
+
+    this.playfield[0] = new Array(PLAYFIELD_COLUMNS).fill(0);
   };
 }
