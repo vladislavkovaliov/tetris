@@ -93,7 +93,7 @@ body {
 }
 
 .grid > div.drop {
-  animation: hide 0.3s;
+  animation: hide 0.9s;
 }
 
 .grid > div.hide {

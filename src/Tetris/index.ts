@@ -218,7 +218,7 @@ export class Tertis {
 
       setTimeout(() => {
         cells[cellIndex].classList.add("drop");
-      }, i * 10);
+      }, 10);
     }
 
     setTimeout(() => {
