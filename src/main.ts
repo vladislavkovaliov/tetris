@@ -11,6 +11,12 @@ import "./style.css";
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics, logEvent } from "firebase/analytics";
+import {
+  addDoc,
+  collection,
+  getFirestore,
+  Firestore,
+} from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -29,6 +35,26 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+const firestore = getFirestore();
+
+export async function sendEvent(
+  firestore: Firestore,
+  eventName: string,
+  payload: Record<string, any>
+) {
+  const col = collection(firestore, "events");
+
+  const data = {
+    eventName: eventName,
+    ...payload,
+  };
+
+  try {
+    await addDoc(col, data);
+  } catch (e) {
+    console.log(e);
+  }
+}
 
 let timeoutId: NodeJS.Timeout | null = null;
 let requestId: number | null = null;
@@ -335,4 +361,11 @@ function gameOverAnimation(cells: NodeListOf<Element>) {
 }
 
 //
-main();
+document.addEventListener("DOMContentLoaded", () => {
+  const reffer = document.referrer;
+
+  logEvent(analytics, "reffer", { reffer: reffer });
+  sendEvent(firestore, "reffer", { reffer: reffer });
+
+  main();
+});
