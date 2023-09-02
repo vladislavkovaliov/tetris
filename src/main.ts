@@ -29,7 +29,7 @@ const firebaseConfig = {
   storageBucket: "tetris-4f4f6.appspot.com",
   messagingSenderId: "302050048482",
   appId: "1:302050048482:web:57ef88c3a307fda32f21bb",
-  measurementId: "G-5L9ZCKQELD",
+  measurementId: "G-02JCNQPBH9",
 };
 
 // Initialize Firebase
